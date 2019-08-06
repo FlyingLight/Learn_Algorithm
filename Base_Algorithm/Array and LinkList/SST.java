@@ -1,55 +1,58 @@
 /**
  * 
  */
-package BST_USE_TEST;
+package LinkList_Learn;
 
 /**
  * @author qiguangqin
  *
  */
-public class SST<K extends Comparable<K>,V> {  //  顺序链表
+public class SST<K extends Comparable<K>>{  //  顺序链表
+	
 	
 	private class Node{   // 只能在外部类中调用，构造函数创建 ,private方法 不可以被继承，所以不可以重写
 		
 		private K key;
 		
-		private V value;
-		
 		private Node next;
 		
 		private Node previous;
 		
-		public Node(K key, V value) {
+		public Node(K key) {
 			
 			this.key=key;
-			
-			this.value=value;
 			
 			this.next=null;
 			
 			this.previous=null;
 			
 		}
+		
+		public Node(K key,Node next,Node previous) {
+			
+			this(key);
+			
+			this.next=next;
+			
+			this.previous=previous;
+			
+		}
 
 		@Override
 		public String toString() {
-			return "[key=" + key + ", value=" + value + "]";
+			return "[key=" + key + "]";
 		}
 		
 		
 	}
 
-	private Node head;
-	
-	private Node rear;
+	private Node header=new Node(null,null,null);
 	
 	private int count;
 	
 	public SST() {
 		
-		this.head=null;
-		
-		this.rear=null;
+		header.next=header.previous=header;
 		
 		this.count=0;
 	}
@@ -66,15 +69,29 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		return count==0;
 	}
 	
-	public void insert(K key,V value) {
+	public void addFirst(K key) {
 		
 		
-		head=_insert(key,value);
+		_addFirst(key,header);
 	}
 	
 	
 	
-	public void delete(K key) {
+	private Node _addFirst(K key,Node node) {
+		
+		Node newNode= new Node(key,node,node.previous);
+		
+		newNode.previous.next=newNode;
+		
+		newNode.next.previous=newNode;
+		
+		this.count++;
+		
+		return newNode;
+	
+	}
+	
+	public void remove(K key) {
 		
 		if(!contain(key)||isEmpty()) {
 			
@@ -84,14 +101,14 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		
 		else {
 		
-		_delete(key);
+		_remove(key);
 		
 		}
 		
 	}
 	
 	
-	private void _delete(K key) {
+	private void _remove(K key) {
 		
 		Node res=search(key);
 		
@@ -99,18 +116,16 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		
 		res.next.previous=res.previous;
 		
-	//	res.next=null;
+		res.next=res.previous=null;
 		
-	//	res.previous=null;
-		
-	//	res=null;
+		res.key=null;
 		
 		this.count--;
 			
 			
 	}
-	
-	private Node _insert(K key,V value) {
+	/*
+	private Node _insert(K key,Node header) {
 		
 		
 		Node res=null;
@@ -153,6 +168,9 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		return head;
 		
 	}
+	*/
+	
+	
 	
 	public boolean contain(K key) {
 		
@@ -165,11 +183,11 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 	private boolean _contain(K key) {
 		
 		
-		Node res= this.head;
+		Node res= this.header;
 		
 		boolean isExist=false;
 		
-		if(res==null) {
+		if(res.next==header || res.previous==header) {
 			
 			System.out.println("empty sst,please insert");
 			
@@ -179,7 +197,7 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 			
 			int num=0;
 		
-			for (Node p=this.head;num<this.size();p=p.next,num++) {
+			for (Node p=this.header;num<=this.size();p=p.next,num++) {
 				
 				if(p.key==key) {
 					
@@ -214,7 +232,7 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 	private Node _search(K key) {
 		
 		
-		Node res= this.head;
+		Node res= this.header;
 		
 		 int num=0;
 		
@@ -228,7 +246,7 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		 
 		else {
 	
-		for (Node p=this.head;num<this.size();p=p.next,num++) {  //  返回第一个 为key 的 node
+		for (Node p=this.header;num<=this.size();p=p.next,num++) {  //  返回第一个 为key 的 node
 			
 			if(p.key==key) {
 				
@@ -241,8 +259,10 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 	
 		return res;
 		
+		
 	}
 	
+	/*
 	public void update(K key,V value) {
 		
 		
@@ -274,6 +294,8 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		
 	}
 	
+	*/
+	
 	
 	public void print() {
 		
@@ -286,12 +308,12 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		
 		else {
 			
-			for(Node p=this.head;num<this.size();p=p.next,num++) {
+			for(Node p=this.header.next;num<this.size();p=p.next,num++) {
 				
 				
 				if(num<this.size()-1) {
 				
-				System.out.print(p.value);
+				System.out.print(p.key);
 				
 				System.out.print("<->");
 				
@@ -300,7 +322,7 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 				
 				else{
 					
-				System.out.println(p.value);
+				System.out.println(p.key);
 			
 				
 				}
@@ -312,24 +334,26 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 	
 	public static void main(String[]args) {
 		
-		SST<String,Integer>sst=new SST<String,Integer>();
+		SST<String>sst=new SST<String>();
 		
-		sst.insert("ming", 11);
+		sst.addFirst("ming");
 		
-		sst.insert("di", 19);
+		sst.addFirst("di");
 		
-		sst.insert("qiq", 26);
+		sst.addFirst("qiq");
 		
-		sst.insert("dqw", 29);
+		sst.addFirst("dqw");
 		
-		sst.insert("poi", 23);
+		sst.addFirst("poi");
+		
+		sst.addFirst("dee");
 		
 		
-		sst.update("ming", 56);
+		//sst.update("ming");
 		
 		System.out.println();
 		
-		sst.delete("dasdfi");
+		sst.remove("dee");
 		
 	//	sst.delete("asdfas");
 		
@@ -338,7 +362,7 @@ public class SST<K extends Comparable<K>,V> {  //  顺序链表
 		//System.out.println();
 		
 		
-		System.out.print("length of link_sequence ="+sst.size()+'\t'+sst.contain("di"));
+		System.out.print("length of link_sequence ="+sst.size()+'\t'+sst.contain("dee"));
 		
 		
 	}

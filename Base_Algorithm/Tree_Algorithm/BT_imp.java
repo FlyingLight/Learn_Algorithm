@@ -137,6 +137,8 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			
 		}
 		
+	
+
 		public V search_nr(K key) {
 			
 			return this.search_no_rec(node_root, key);
@@ -374,6 +376,21 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			
 			return node_cur.value;
 			
+		}
+		
+		
+		public int maxDepth() {
+			
+			return _maxDepth(node_root);
+		}
+		
+		private int _maxDepth(Node node) {
+			
+			if(node ==null)
+				
+				return 0;
+			
+			else return Math.max(_maxDepth(node.left_child),_maxDepth(node.right_child))+1;
 		}
 		
 		public void preorder() {
@@ -651,7 +668,7 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 				
 				TagNode tagNode=stack.pop();
 				
-				node_cur=tagNode.node;
+				node_cur=tagNode.node;   //  node without left_node,but has the right_node,has been watched,so can print
 				
 				if(tagNode.isWatched==false) {
 					
@@ -985,6 +1002,8 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 				
 		}
 		
+	
+		
 		private Node _findMax(Node node) {
 			
 			if(node.right_child!=null) 
@@ -1112,7 +1131,7 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 					
 					successor.right_child=_removeMin(node.right_child);
 					
-					//  node.right中删除 原来的S节点，并把 successor的right 指向  min节点的右孩子
+					//  node.right中删除 原来的S节点，并把 successor的right 指向  原来node节点的右孩子
 					
 					successor.left_child=node.left_child;
 					
@@ -1125,6 +1144,22 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			}
 		
 		
+		public int countNodes() {
+			
+			return countNodes(node_root);
+		}
+		
+		private  int countNodes(Node node){
+
+
+			if(node==null)
+
+				return 0;
+
+			else
+
+				return countNodes(node.left_child)+countNodes(node.right_child)+1;
+		}
 		
 		public static void main(String[] args) {
 			
@@ -1145,6 +1180,7 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			bt_imp.insert(42,"g");
 			
 		
+		
 		//	boolean f=bt_imp.contain(3);
 			
 	//		int Age=bt_imp.search_nr(3);
@@ -1155,6 +1191,8 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			
 		//	bt_imp.remove(22);
 			
+			System.out.println(bt_imp.countNodes());
+			
 			bt_imp.postorder_no_rec();
 			
 			System.out.println();
@@ -1162,6 +1200,8 @@ public class BT_imp<K extends Comparable<K>,V> implements BT<K,V>{
 			bt_imp.Level_order();
 			
 			System.out.println();
+			
+			System.out.println("max_depth="+bt_imp.maxDepth());
 			
 			System.out.println("Size of BST tree="+bt_imp.size()+"\t"+bt_imp.contain_no_rec(29)+"\t"+"  min value of tree="+bt_imp.findMin());
 			
